@@ -1,6 +1,6 @@
 import { db } from "../database/db.connection.js"
 
-export async function postClientDB(clientId, cakeId, quantity, totalPrice){
+export async function postOrderDB(clientId, cakeId, quantity, totalPrice){
     return await db.query(`
     INSERT INTO orders
     ("clientId", "cakeId", quantity , "totalPrice", "createdAt")
