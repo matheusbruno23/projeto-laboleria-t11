@@ -1,6 +1,6 @@
 import { getCakeByIdDB } from "../repositories/cakes.repositories.js"
 import { getClientByIdDB } from "../repositories/clients.repositories.js"
-import { getOrdersDB, postOrderDB } from "../repositories/orders.repositories.js"
+import { getOrderByIdDB, getOrdersDB, postOrderDB } from "../repositories/orders.repositories.js"
 
 export async function orderCake(req, res){
 
@@ -24,7 +24,8 @@ export async function orderCake(req, res){
 
 export async function getOrders(req, res){
     try {
-        const orders = await getOrdersDB()
+        const {date}= req.query
+        const orders = await getOrdersDB(date)
         
         if(orders.rowCount === 0) return res.status(404).send([])
 
@@ -60,7 +61,40 @@ export async function getOrders(req, res){
 }
 
 export async function getOrderById(req, res){
+
+    const {id}= req.params
+
     try {
+
+        const orders = await getOrderByIdDB(id)
+
+        if(orders.rowCount === 0) return res.status(404).send([])
+
+        const allOrders = orders.rows.map( (o) => {
+
+            const orderData = {
+                client: {
+                    id: o.clientId,
+                    name: o.clientName,
+                    address: o.address,
+                    phone: o.phone
+                },
+                cake:{
+                    id: o.cakeId,
+                    name: o.cakeName,
+                    price: o.price,
+                    description: o.description,
+                    image: o.image
+                },
+                orderId: o.orderId,
+                createdAt: o.createdAt,
+                quantity: o.quantity,
+                totalPrice: o.totalPrice
+            }
+            return orderData
+        })
+
+        return res.status(200).send(allOrders)
         
     } catch (error) {
         return res.status(500).send(error.message)
