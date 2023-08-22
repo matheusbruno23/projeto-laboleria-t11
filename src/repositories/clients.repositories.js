@@ -10,7 +10,18 @@ export async function postClientDB(name, address, phone){
 
 
 export async function getClientOrdersById(clientId){
-    return await db.query(`SELECT * FROM orders WHERE "clientId"=$1;`, [clientId])
+    return await db.query(`
+    SELECT
+    orders.id AS "orderId",
+    orders.quantity,
+    orders."createdAt",
+    orders."totalPrice",
+    cakes.name AS "cakeName"
+    FROM orders 
+    JOIN cakes ON orders."cakeId" = cakes.id
+    JOIN clients ON orders."clientId" = clients.id
+    WHERE orders."clientId"=$1
+    ;`, [clientId])
 }
 
 export async function getClientByIdDB(id){
