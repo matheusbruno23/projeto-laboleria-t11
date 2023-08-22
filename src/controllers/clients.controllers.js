@@ -24,18 +24,6 @@ export async function getClientOrders(req, res){
 
         const allClientOrders = await getClientOrdersById(id)
 
-        const formatedOrders = allClientOrders.rows.map((o)=> {
-
-            const orderData = {
-                orderId: o.orderId,
-                quantity: o.quantity,
-                createdAt: o.createdAt,
-                totalPrice: o.totalPrice,
-                cakeName: o.cakeName
-            }
-            return orderData
-        })
-
         return res.send(allClientOrders.rows)
         
     } catch (error) {
